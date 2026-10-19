@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agendar cita · CitaClara</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="top"><span class="brand">CitaClara</span></header>
+  <main>
+    <div id="message" class="hidden"></div>
+
+    <section id="booking" class="hidden">
+      <div class="card">
+        <h1 id="professional-name"></h1>
+        <p class="muted" id="professional-specialty"></p>
+      </div>
+
+      <div class="card">
+        <h2>1. Tipo de consulta</h2>
+        <div id="types" class="options"></div>
+      </div>
+
+      <div class="card">
+        <h2>2. Fecha y horario</h2>
+        <label for="date">Fecha</label>
+        <input type="date" id="date" style="max-width: 220px">
+        <p class="muted" id="slots-hint">Elige un tipo de consulta y una fecha.</p>
+        <div id="slots" class="slots"></div>
+      </div>
+
+      <form class="card" id="patient-form">
+        <h2>3. Tus datos</h2>
+        <div class="grid">
+          <div><label for="name">Nombre completo</label><input id="name" required minlength="2"></div>
+          <div><label for="email">Correo</label><input id="email" type="email" required></div>
+          <div><label for="phone">Teléfono</label><input id="phone" required minlength="7"></div>
+        </div>
+        <label for="notes">Motivo de la consulta (opcional)</label>
+        <textarea id="notes" rows="2" maxlength="500"></textarea>
+        <p><button type="submit" id="submit" disabled>Confirmar cita</button></p>
+      </form>
+    </section>
+
+    <section id="confirmation" class="card hidden">
+      <h1>¡Cita agendada!</h1>
+      <p id="confirmation-detail"></p>
+      <p id="confirmation-notes" class="muted"></p>
+      <p>Guarda este enlace para consultar, reprogramar o cancelar tu cita:</p>
+      <p><a id="manage-link" class="button" href="#">Gestionar mi cita</a></p>
+    </section>
+  </main>
+  <script src="/js/api.js"></script>
+  <script src="/js/booking.js"></script>
+</body>
+</html>

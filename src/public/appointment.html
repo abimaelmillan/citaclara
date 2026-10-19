@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi cita · CitaClara</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="top"><span class="brand">CitaClara</span></header>
+  <main>
+    <div id="message" class="hidden"></div>
+    <section id="detail" class="card hidden">
+      <div class="row"><h1 id="type-name"></h1><span id="status" class="badge"></span></div>
+      <p id="when"></p>
+      <p class="muted" id="with"></p>
+      <p class="muted" id="preparation"></p>
+      <div id="actions" class="row">
+        <button class="secondary" id="show-reschedule">Reprogramar</button>
+        <button class="danger" id="cancel">Cancelar cita</button>
+      </div>
+    </section>
+    <section id="reschedule" class="card hidden">
+      <h2>Elige un nuevo horario</h2>
+      <label for="date">Fecha</label>
+      <input type="date" id="date" style="max-width: 220px">
+      <p class="muted" id="slots-hint"></p>
+      <div id="slots" class="slots"></div>
+    </section>
+  </main>
+  <script src="/js/api.js"></script>
+  <script src="/js/appointment.js"></script>
+</body>
+</html>

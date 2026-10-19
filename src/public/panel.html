@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel · CitaClara</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="top">
+    <span class="brand">CitaClara</span>
+    <div class="row hidden" id="session"><span id="user-name" class="muted"></span><button class="secondary small" id="logout">Salir</button></div>
+  </header>
+  <main>
+    <div id="message" class="hidden"></div>
+
+    <section id="auth" class="card hidden" style="max-width: 440px; margin: 24px auto">
+      <div class="tabs">
+        <button class="secondary small" data-tab="login">Iniciar sesión</button>
+        <button class="secondary small" data-tab="register">Crear cuenta</button>
+      </div>
+      <form id="login-form">
+        <h2>Iniciar sesión</h2>
+        <label for="login-email">Correo</label><input id="login-email" type="email" required>
+        <label for="login-password">Contraseña</label><input id="login-password" type="password" required>
+        <p><button type="submit">Entrar</button></p>
+      </form>
+      <form id="register-form" class="hidden">
+        <h2>Crear cuenta de profesional</h2>
+        <label for="reg-name">Nombre</label><input id="reg-name" required minlength="2">
+        <label for="reg-specialty">Especialidad</label><input id="reg-specialty">
+        <label for="reg-email">Correo</label><input id="reg-email" type="email" required>
+        <label for="reg-password">Contraseña (mínimo 8)</label><input id="reg-password" type="password" required minlength="8">
+        <p><button type="submit">Crear cuenta</button></p>
+      </form>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="card">
+        <h1>Hola, <span id="greeting"></span></h1>
+        <p class="muted">Comparte este enlace con tus pacientes para que agenden:</p>
+        <p><code class="link" id="public-link"></code> <button class="secondary small" id="copy-link">Copiar</button></p>
+      </div>
+
+      <div class="card">
+        <h2>Próximas citas</h2>
+        <div id="appointments"></div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Tipos de consulta</h2>
+          <div id="types"></div>
+          <form id="type-form">
+            <label for="type-name">Nuevo tipo</label><input id="type-name" placeholder="Ej. Consulta de primera vez" required>
+            <div class="row">
+              <div style="flex:1"><label for="type-duration">Minutos</label><input id="type-duration" type="number" min="10" max="480" value="30" required></div>
+              <div style="flex:1"><label for="type-price">Precio</label><input id="type-price" type="number" min="0" value="0"></div>
+            </div>
+            <label for="type-notes">Indicaciones previas</label><input id="type-notes">
+            <p><button type="submit">Agregar</button></p>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Horario semanal</h2>
+          <div id="availability"></div>
+          <form id="availability-form">
+            <label for="av-day">Día</label>
+            <select id="av-day"></select>
+            <div class="row">
+              <div style="flex:1"><label for="av-start">Inicio</label><input id="av-start" type="time" value="09:00" required></div>
+              <div style="flex:1"><label for="av-end">Fin</label><input id="av-end" type="time" value="14:00" required></div>
+            </div>
+            <p><button type="submit">Agregar bloque</button></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="/js/api.js"></script>
+  <script src="/js/panel.js"></script>
+</body>
+</html>
