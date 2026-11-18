@@ -18,7 +18,7 @@ interface AuthResult {
   token: string;
 }
 
-async function generateUniqueSlug(name: string): Promise<string> {
+export async function generateUniqueSlug(name: string): Promise<string> {
   const base = slugify(name) || 'profesional';
   let candidate = base;
   for (let suffix = 2; await User.exists({ slug: candidate }); suffix += 1) {
@@ -46,8 +46,9 @@ export async function registerProfessional(input: RegisterInput): Promise<AuthRe
 }
 
 export async function login(email: string, password: string): Promise<AuthResult> {
+  // Una cuenta creada con Google no tiene contraseña: responde igual que una contraseña incorrecta.
   const user = await User.findOne({ email: email.toLowerCase() }).select('+passwordHash');
-  if (!user || !(await verifyPassword(password, user.passwordHash))) {
+  if (!user?.passwordHash || !(await verifyPassword(password, user.passwordHash))) {
     throw new AppError(401, 'INVALID_CREDENTIALS', 'Correo o contraseña incorrectos');
   }
   return { user, token: signAccessToken(user.id, user.role) };

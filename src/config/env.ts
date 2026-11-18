@@ -15,12 +15,21 @@ function required(name: string): string {
   return value;
 }
 
+const port = Number(process.env.PORT ?? 4000);
+const appUrl = process.env.APP_URL ?? `http://localhost:${port}`;
+
 export const env = {
-  port: Number(process.env.PORT ?? 4000),
+  port,
   nodeEnv: process.env.NODE_ENV ?? 'development',
   mongoUri: required('MONGO_URI'),
   jwtSecret: required('JWT_SECRET'),
   jwtTtl: process.env.JWT_TTL ?? '8h',
-  appUrl: process.env.APP_URL ?? `http://localhost:${process.env.PORT ?? 4000}`,
-  defaultTimezone: process.env.DEFAULT_TIMEZONE ?? 'America/Mexico_City'
+  appUrl,
+  defaultTimezone: process.env.DEFAULT_TIMEZONE ?? 'America/Mexico_City',
+  // Opcionales: sin ellas la app funciona, pero el login con Google y Calendar quedan deshabilitados.
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    redirectUri: process.env.GOOGLE_REDIRECT_URI || `${appUrl}/api/auth/google/callback`
+  }
 };

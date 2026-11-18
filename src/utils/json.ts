@@ -7,6 +7,12 @@ export const jsonOptions = {
     delete ret._id;
     delete ret.passwordHash;
     delete ret.manageTokenHash;
+    const google = ret.google as Record<string, unknown> | undefined;
+    if (google) {
+      delete google.refreshToken;
+      delete google.accessToken;
+      delete google.accessTokenExpiresAt;
+    }
     return ret;
   }
 };
