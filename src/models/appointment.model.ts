@@ -3,6 +3,7 @@ import { jsonOptions } from '../utils/json.js';
 
 export const appointmentStatuses = ['scheduled', 'completed', 'cancelled', 'no_show'] as const;
 export type AppointmentStatus = (typeof appointmentStatuses)[number];
+export const calendarSyncStatuses = ['synced', 'failed', 'skipped'] as const;
 
 const appointmentSchema = new Schema(
   {
@@ -14,7 +15,14 @@ const appointmentSchema = new Schema(
     status: { type: String, enum: appointmentStatuses, default: 'scheduled' },
     notes: { type: String, trim: true, default: '' },
     cancelledBy: { type: String, enum: ['patient', 'professional'] },
-    manageTokenHash: { type: String, required: true, unique: true, select: false }
+    manageTokenHash: { type: String, required: true, unique: true, select: false },
+    // Evento creado en el Google Calendar del profesional y resultado del último intento de sincronización.
+    googleEventId: { type: String },
+    calendarSync: {
+      status: { type: String, enum: calendarSyncStatuses },
+      error: { type: String },
+      syncedAt: { type: Date }
+    }
   },
   { timestamps: true, toJSON: jsonOptions }
 );

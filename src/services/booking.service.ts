@@ -7,6 +7,7 @@ import { Patient } from '../models/patient.model.js';
 import { User } from '../models/user.model.js';
 import { AppError } from '../utils/app-error.js';
 import { createManageToken, hashManageToken } from '../utils/manage-token.js';
+import { afterAppointmentChange } from './appointment-sync.service.js';
 import { assertSlotIsBookable, computeSlots, serializeSlot } from './slot.service.js';
 
 interface BookingInput {
@@ -37,6 +38,10 @@ async function findActiveAppointmentType(professionalId: unknown, appointmentTyp
   const appointmentType = await AppointmentType.findOne({ _id: appointmentTypeId, professional: professionalId, active: true });
   if (!appointmentType) throw new AppError(404, 'APPOINTMENT_TYPE_NOT_FOUND', 'El tipo de consulta no existe');
   return appointmentType;
+}
+
+function findPublicById(id: string) {
+  return Appointment.findById(id).populate(publicPopulate);
 }
 
 async function findByToken(token: string) {
@@ -104,8 +109,8 @@ export async function bookAppointment(slug: string, input: BookingInput) {
       notes: input.notes ?? '',
       manageTokenHash: hash
     });
-    await appointment.populate(publicPopulate);
-    return { appointment, manageToken: token, manageUrl: `${env.appUrl}/cita/${token}` };
+    await afterAppointmentChange(appointment.id, 'created');
+    return { appointment: await findPublicById(appointment.id), manageToken: token, manageUrl: `${env.appUrl}/cita/${token}` };
   } catch (error) {
     // Otro paciente ganó el mismo horario entre la validación y el guardado.
     if (isDuplicateKeyError(error)) {
@@ -125,7 +130,8 @@ export async function cancelByToken(token: string) {
   assertCanBeChanged(appointment);
   appointment.set({ status: 'cancelled', cancelledBy: 'patient' });
   await appointment.save();
-  return appointment.populate(publicPopulate);
+  await afterAppointmentChange(appointment.id, 'cancelled');
+  return findPublicById(appointment.id);
 }
 
 export async function rescheduleByToken(token: string, startAt: string) {
@@ -141,6 +147,7 @@ export async function rescheduleByToken(token: string, startAt: string) {
   const start = DateTime.fromISO(startAt).setZone(professional.timezone);
   await assertSlotIsBookable(professional, appointmentType.durationMinutes, start, appointment.id);
 
+  const previousStartAt = appointment.startAt;
   appointment.set({
     startAt: start.toJSDate(),
     endAt: start.plus({ minutes: appointmentType.durationMinutes }).toJSDate()
@@ -153,5 +160,6 @@ export async function rescheduleByToken(token: string, startAt: string) {
     }
     throw error;
   }
-  return appointment.populate(publicPopulate);
+  await afterAppointmentChange(appointment.id, 'rescheduled', previousStartAt);
+  return findPublicById(appointment.id);
 }

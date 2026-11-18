@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import type { PopulateOptions } from 'mongoose';
 import { Appointment, type AppointmentStatus } from '../models/appointment.model.js';
 import { AppError } from '../utils/app-error.js';
+import { afterAppointmentChange } from './appointment-sync.service.js';
 import { getProfile } from './auth.service.js';
 
 interface ListFilters {
@@ -56,5 +57,7 @@ export async function updateAppointmentStatus(
     throw new AppError(409, 'APPOINTMENT_NOT_STARTED', 'La cita aún no ocurre');
   }
   appointment.set({ status, ...(status === 'cancelled' ? { cancelledBy: 'professional' } : {}) });
-  return appointment.save();
+  await appointment.save();
+  await afterAppointmentChange(appointment.id, status);
+  return getAppointment(professionalId, id);
 }
