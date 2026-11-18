@@ -45,3 +45,14 @@ th { color: var(--muted); font-weight: 600; }
 .hidden { display: none !important; }
 .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
 code.link { background: var(--accent-soft); padding: 4px 8px; border-radius: 6px; word-break: break-all; }
+
+.button.google { display: block; text-align: center; background: #fff; color: var(--text); border: 1px solid var(--border); }
+.divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .85rem; margin: 14px 0; }
+.divider::before, .divider::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
+.live { font-size: .85rem; color: var(--muted); }
+.live.online { color: var(--accent); font-weight: 600; }
+.toasts { position: fixed; right: 18px; bottom: 18px; display: grid; gap: 10px; z-index: 10; }
+.toast { background: var(--surface); border: 1px solid var(--accent); border-left: 5px solid var(--accent); border-radius: 10px; padding: 12px 16px; box-shadow: 0 6px 20px rgba(0,0,0,.12); max-width: 320px; font-size: .92rem; }
+.cal { font-size: .82rem; white-space: nowrap; }
+.cal.synced { color: var(--accent); font-weight: 600; }
+.cal.failed { color: var(--danger); font-weight: 600; }

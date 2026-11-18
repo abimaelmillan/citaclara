@@ -1,5 +1,5 @@
 const slug = decodeURIComponent(location.pathname.split('/').pop());
-const state = { profile: null, typeId: null, startAt: null };
+const state = { profile: null, typeId: null, startAt: null, booked: false };
 const $ = (id) => document.getElementById(id);
 
 async function loadProfile() {
@@ -21,20 +21,38 @@ async function loadProfile() {
   $('booking').classList.remove('hidden');
 }
 
-async function loadSlots() {
+// keepSelection: al recargar por un aviso en tiempo real se conserva el horario elegido si sigue libre.
+async function loadSlots({ keepSelection = false } = {}) {
+  const previous = keepSelection ? state.startAt : null;
   state.startAt = null;
   updateSubmit();
+  if (!keepSelection) $('slots-notice').classList.add('hidden');
   if (!state.typeId || !$('date').value) return;
   $('slots-hint').textContent = 'Buscando horarios...';
   $('slots').innerHTML = '';
   try {
     const result = await api(`/api/public/professionals/${encodeURIComponent(slug)}/slots?appointmentTypeId=${state.typeId}&date=${$('date').value}`);
-    $('slots-hint').textContent = result.slots.length ? 'Horarios disponibles:' : 'No hay horarios disponibles ese día.';
+    $('slots-hint').textContent = result.slots.length ? 'Horarios disponibles (se actualizan en tiempo real):' : 'No hay horarios disponibles ese día.';
     $('slots').innerHTML = result.slots.map((slot) =>
-      `<button type="button" class="slot" data-start="${slot.startAt}">${slot.time}</button>`).join('');
+      `<button type="button" class="slot${slot.startAt === previous ? ' selected' : ''}" data-start="${slot.startAt}">${slot.time}</button>`).join('');
+    if (previous && result.slots.some((slot) => slot.startAt === previous)) {
+      state.startAt = previous;
+    } else if (previous) {
+      showMessage($('slots-notice'), 'El horario que elegiste acaba de ser reservado por otra persona. Elige otro.');
+    }
+    updateSubmit();
   } catch (error) {
     $('slots-hint').textContent = error.message;
   }
+}
+
+// Tiempo real: si alguien más agenda o cancela en la fecha que estoy viendo, se recargan los horarios.
+if (typeof io === 'function') {
+  const socket = io('/agenda');
+  socket.on('connect', () => socket.emit('agenda:watch', { slug }));
+  socket.on('slots:changed', ({ dates }) => {
+    if (!state.booked && state.typeId && dates.includes($('date').value)) loadSlots({ keepSelection: true });
+  });
 }
 
 function updateSubmit() {
@@ -72,6 +90,7 @@ $('patient-form').addEventListener('submit', async (event) => {
         notes: $('notes').value || undefined
       }
     });
+    state.booked = true;
     const { appointment } = result;
     $('confirmation-detail').innerHTML = `<strong>${escapeHtml(appointment.appointmentType.name)}</strong> con ${escapeHtml(appointment.professional.name)}<br>${formatDateTime(appointment.startAt, state.profile.timezone)}`;
     $('confirmation-notes').textContent = appointment.appointmentType.preparationNotes

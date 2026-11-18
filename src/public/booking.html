@@ -27,6 +27,7 @@
         <label for="date">Fecha</label>
         <input type="date" id="date" style="max-width: 220px">
         <p class="muted" id="slots-hint">Elige un tipo de consulta y una fecha.</p>
+        <p id="slots-notice" class="message error hidden"></p>
         <div id="slots" class="slots"></div>
       </div>
 
@@ -51,6 +52,7 @@
       <p><a id="manage-link" class="button" href="#">Gestionar mi cita</a></p>
     </section>
   </main>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/booking.js"></script>
 </body>

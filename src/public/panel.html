@@ -9,12 +9,14 @@
 <body>
   <header class="top">
     <span class="brand">CitaClara</span>
-    <div class="row hidden" id="session"><span id="user-name" class="muted"></span><button class="secondary small" id="logout">Salir</button></div>
+    <div class="row hidden" id="session"><span id="live" class="live">○ Sin conexión</span><span id="user-name" class="muted"></span><button class="secondary small" id="logout">Salir</button></div>
   </header>
   <main>
     <div id="message" class="hidden"></div>
 
     <section id="auth" class="card hidden" style="max-width: 440px; margin: 24px auto">
+      <a class="button google" href="/api/auth/google">Continuar con Google</a>
+      <p class="divider"><span>o con tu correo</span></p>
       <div class="tabs">
         <button class="secondary small" data-tab="login">Iniciar sesión</button>
         <button class="secondary small" data-tab="register">Crear cuenta</button>
@@ -40,6 +42,12 @@
         <h1>Hola, <span id="greeting"></span></h1>
         <p class="muted">Comparte este enlace con tus pacientes para que agenden:</p>
         <p><code class="link" id="public-link"></code> <button class="secondary small" id="copy-link">Copiar</button></p>
+      </div>
+
+      <div class="card">
+        <h2>Google Calendar</h2>
+        <p id="google-status" class="muted"></p>
+        <button class="secondary hidden" id="google-link">Conectar Google Calendar</button>
       </div>
 
       <div class="card">
@@ -78,6 +86,8 @@
       </div>
     </section>
   </main>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/panel.js"></script>
 </body>
